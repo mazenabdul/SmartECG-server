@@ -8,23 +8,23 @@ const Users = mongoose.model('Users')
 //Route for requesting daily data - PROTECTED ROUTE. 
 router.post('/daily', auth, async (req, res) => {
   
-  //Find the user in the DB, extract its data object 
+  //Find the user in the DB, extract its data object and selected date 
   const user = await Users.findById(req.user._id)
-  console.log(req.body.dateString)
-  //console.log(user.data)
-  const values = user.data
-  values.filter((obj) => {
-    try {
-      if(obj.timestamp.includes(req.body.dateString)) {
-        const voltages = obj.voltage
-        const time = obj.time
-        console.log(voltages, time)
-        //return (voltages, time)
-       } 
-    } catch (e) {
-      console.error(e)
-    }
+  const { dateString } = req.body
+  const { data } = user
+
+  const filtered = data.filter(obj => {
+    return obj.timestamp === dateString
+  }).map( obj => {
+      const voltage = obj.voltage
+      const time = obj.time
+      res.send({ voltage, time }) 
   })
+  
+  if(filtered.length === 0){
+    res.status(400).send({ error: 'No matching results' })
+  }
+      
 
 })
 
