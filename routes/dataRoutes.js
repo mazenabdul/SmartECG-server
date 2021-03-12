@@ -14,26 +14,14 @@ router.post('/daily', auth, async (req, res) => {
   const { data } = user
 
   const filtered = data.filter(obj => {
-    return obj.timestamp === dateString
-  }).map( obj => {
-      const voltage = obj.voltage
-      const time = obj.time
-      res.send({ voltage, time }) 
+    return obj.timestamp === dateString 
   })
-  
+    res.send(filtered)
+
   if(filtered.length === 0){
     res.status(400).send({ error: 'No matching results' })
-  }
-      
-
+  } 
 })
-
-  //Filter out the voltage and time arrays for the current date 
-  //const voltages = await user.find({  })
-  //console.log(user[0].data)
-  //return res.send(user.data)
-
-
 
 router.get('/weekly', auth, async (req, res) => {
   const user = await Users.findById(req.user._id)
@@ -48,16 +36,26 @@ router.get('/weekly', auth, async (req, res) => {
   return res.send({ voltage, time })
 })
 
-router.get('/monthly', auth, async (req, res) => {
+router.post('/monthly', auth, async (req, res) => {
+  //Recieve the formatted string from the monthly endpoint along with the logged in user
   const user = await Users.findById(req.user._id)
+  const { input } = req.body
+  const { data } = user
 
-  //Return the voltage and time arrays for this time frame
-  const voltage = user.voltage
-  const time = user.time
+  //Search through the user data and filter out matching dates
+  const filtered = data.filter(matches => {
+    return matches.timestamp.includes(input)
+  })
 
-  //Filter out the voltage and time arrays for the last 28 days according to the date
+  
 
-  return res.send({ voltage, time })
+  return res.send(filtered)
+  
+})
+
+router.post ('/user', async (req,res) => {
+  const user = await Users.findById(req.user._id)
+  console.log(user)
 })
 
 
