@@ -69,7 +69,7 @@ router.post('/signin', async (req, res) => {
       if(err){
         res.send(err)
       }
-      res.json({ token })
+      res.json({ token, email })
     })
     
   } catch (err) {
