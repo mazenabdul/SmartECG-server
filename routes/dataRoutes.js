@@ -12,7 +12,7 @@ router.post('/daily', auth, async (req, res) => {
   const user = await Users.findById(req.user._id)
   const { dateString } = req.body
   const { data } = user
-
+  
   try{
     const filtered = data.filter(obj => {
       return obj.timestamp === dateString 
